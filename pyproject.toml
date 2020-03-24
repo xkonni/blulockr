@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "blulockr"
+version = "0.1.0"
+description = ""
+authors = ["Konstantin Koslowski <konstantin.koslowski@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+xdg = "^4.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[tool.poetry.scripts]
+blulockr = "blulockr.main:main"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
