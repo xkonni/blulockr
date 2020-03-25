@@ -12,18 +12,21 @@ import time
 MAX_RETRIES = 5
 
 class BluLockr:
-    def __init__(self, ltype, btdevice, interval, debug=False):
+    def __init__(self, ltype, btdevice, interval, noop=False, debug=False):
         self.ltype = ltype
         self.btdevice = btdevice
         self.interval = interval
-        self.locked = 0
         self.failcount = 0
+        self.noop = noop
         self.debug = debug
         self.logger = logging.getLogger("BluLockr")
         if self.debug:
             self.logger.setLevel(logging.DEBUG)
 
-        self.locker = locker.Locker(ltype=self.ltype, debug=self.debug)
+        if self.ltype == "loginctl":
+            self.locker = locker.LoginCtl(debug=self.debug)
+        else:
+            self.locker = locker.Locker(debug=self.debug)
     
 
     def scan(self):
@@ -41,27 +44,26 @@ class BluLockr:
         try:
             ret = subprocess.run(["l2ping", self.btdevice, "-t", "1", "-c", "1"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if ret.stderr == b"Can't create socket: Operation not permitted\n":
-                self.logger.warning(f"error: {ret.stderr.decode()}")
+                self.logger.warning(f"error: {ret.stderr.decode()}, run setup.sh as root!")
                 return
 
             r = ret.returncode
+            self.logger.debug(f"returncode: {r}")
             if r == 0:
-                self.logger.debug(f"returncode: {r}")
                 self.failcount = 0
-                if self.locked:
+                if self.locker.locked():
                     self.logger.info("unlocking...")
-                    self.locked = False
-                    self.locker.unlock()
+                    if not self.noop:
+                        self.locker.unlock()
             elif r == 1:
-                self.logger.debug(f"ret: {ret}")
-                if not self.locked:
+                if not self.locker.locked():
                     self.failcount += 1
                     self.logger.debug(f"failcount: {self.failcount}")
                     if self.failcount > MAX_RETRIES:
                         self.logger.info("locking...")
                         self.failcount = 0
-                        self.locked = True
-                        self.locker.lock()
+                        if not self.noop:
+                            self.locker.lock()
         except Exception as ex:
             self.logger.error(f"Exception, Type:{type(ex).__name__}, args:{ex.args}")
 

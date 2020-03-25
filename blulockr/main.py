@@ -15,8 +15,8 @@ from blulockr.blulockr import BluLockr
 CONFIG_FILE=f"{XDG_CONFIG_HOME}/blulockr.json"
 BTDEVICE = None
 INTERVAL = 3
-LTYPE = "simulate"
-LTYPES = ["simulate", "loginctl"]
+LTYPE = "undefined"
+LTYPES = ["undefined", "loginctl"]
 
 # runtime
 logger = None
@@ -35,6 +35,8 @@ def setup():
             help=f"locker type [{', '.join(t for t in LTYPES)}]")
     parser.add_argument("-s", "--scan", dest="scan", action="store_true",
             help="scan for devices")
+    parser.add_argument("-n", "--noop", dest="noop", action="store_true",
+            help="don't execute lock/unlock commands")
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
             help="debug mode")
     parser.add_argument("-c", "--config", dest="config_file", type=str, default=CONFIG_FILE,
@@ -78,6 +80,10 @@ def setup():
         config["scan"] = args.scan
     else:
         config["scan"] = False
+    if args.noop:
+        config["noop"] = args.noop
+    else:
+        config["noop"] = False
     if args.debug:
         config["debug"] = args.debug
     else:
@@ -100,7 +106,8 @@ def main():
     logger.debug(f"config: {config}")
 
     BL = BluLockr(ltype=config.get("ltype"), btdevice=config.get("btdevice"),
-            interval=config.get("interval"), debug=config.get("debug"))
+            interval=config.get("interval"), noop=config.get("noop"),
+            debug=config.get("debug"))
     if config.get("scan") or not config.get("btdevice"):
         BL.scan()
     else:

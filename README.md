@@ -26,6 +26,12 @@ $ poetry shell
 $ pip3 install pybluez
 ```
 
+- allow users to execute l2ping
+
+```bash
+$ ./setup.sh
+```
+
 
 usage
 -----
