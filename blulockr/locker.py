@@ -11,7 +11,7 @@ class Locker:
     def __init__(self, ltype="undefined", debug=False):
         self.ltype = ltype
         self.debug = debug
-        self.logger = logging.getLogger(f"Lockr:{self.ltype}")
+        self.logger = logging.getLogger(f"locker")
         if self.debug:
             self.logger.setLevel(logging.DEBUG)
 
@@ -45,7 +45,7 @@ class LoginCtl(Locker):
         self.lock_cmd = ["/usr/bin/loginctl", "lock-session"]
         self.unlock_cmd = ["/usr/bin/loginctl", "unlock-session"]
         self.sessionid = self.get_sessionid()
-        self.logger.info("init completed.")
+        self.logger.info(f"{self.ltype} ready")
 
     def get_sessionid(self):
         ret = subprocess.run(["/usr/bin/loginctl", "list-sessions"], stdout=subprocess.PIPE)
