@@ -29,7 +29,7 @@ $ pip3 install pybluez
 - allow users to execute l2ping
 
 ```bash
-$ ./setup.sh
+$ sudo setcap cap_net_raw+ep $(which l2ping)
 ```
 
 
