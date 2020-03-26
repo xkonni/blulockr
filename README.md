@@ -45,14 +45,19 @@ $ blulockr -h
 - scan for bluetooth devices
 
 ```bash
-$ sudo blulockr -s
+$ blulockr -s
+
+2 devices found:
+  00:11:22:33:44:55 mydevice
+  11:22:33:44:55:66 otherdevice
 ```
 
 - run, using
 
-  - a detected bluetooth device
-  - the loginctl backend
+  - btdevice: hardware address from scan
+  - type: loginctl
+  - interval: 5 seconds
 
 ```bash
-$ sudo blulockr -b 00:11:22:33:44:55 -t loginctl
+$ blulockr -b 00:11:22:33:44:55 -t loginctl -i 5
 ```

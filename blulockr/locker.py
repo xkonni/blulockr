@@ -69,7 +69,7 @@ class LoginCtl(Locker):
                     res = False
                 elif locked == "yes":
                     res =  True
-                else: 
-                    self.logger.error(f"locked: {locked}") 
+                else:
+                    self.logger.error(f"locked: {locked}")
         self.logger.debug(f"locked: {res}")
         return res
