@@ -39,8 +39,8 @@ def setup():
             help="don't execute lock/unlock commands")
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
             help="debug mode")
-    parser.add_argument("-c", "--config", dest="config_file", type=str, default=CONFIG_FILE,
-            help="config file")
+    parser.add_argument("-c", "--config", dest="config_file", type=str,
+            default=CONFIG_FILE, help="config file")
 
     # parse arguments
     args = parser.parse_args()

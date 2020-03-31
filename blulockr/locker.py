@@ -48,7 +48,8 @@ class LoginCtl(Locker):
         self.logger.info(f"{self.ltype} ready")
 
     def get_sessionid(self):
-        ret = subprocess.run(["/usr/bin/loginctl", "list-sessions"], stdout=subprocess.PIPE)
+        ret = subprocess.run(["/usr/bin/loginctl", "list-sessions"],
+                stdout=subprocess.PIPE)
         sessionid = 0
         for line in ret.stdout.decode().split("\n"):
             if "seat" in line:
@@ -60,7 +61,8 @@ class LoginCtl(Locker):
 
 
     def locked(self):
-        ret = subprocess.run(["/usr/bin/loginctl", "show-session", self.sessionid], stdout=subprocess.PIPE)
+        ret = subprocess.run(["/usr/bin/loginctl", "show-session", self.sessionid],
+                stdout=subprocess.PIPE)
         res = False
         for line in ret.stdout.decode().split("\n"):
             if "LockedHint" in line:

@@ -42,7 +42,8 @@ class BluLockr:
 
     def watch(self):
         try:
-            ret = subprocess.run(["l2ping", self.btdevice, "-t", "1", "-c", "1"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ret = subprocess.run(["l2ping", self.btdevice, "-t", "1", "-c", "1"],
+                    shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # handle specific errors
             if ret.stderr == b"Can't create socket: Operation not permitted\n":
                 self.logger.warning(f"error: {ret.stderr.decode()}, run setup.sh as root!")
@@ -52,9 +53,9 @@ class BluLockr:
                 return
 
             r = ret.returncode
-            self.logger.debug(f"l2ping success, failcount: {self.failcount}")
             if r == 0:
                 self.failcount = 0
+                self.logger.debug(f"l2ping success, failcount: {self.failcount}")
                 if self.locker.locked():
                     self.logger.info("unlocking...")
                     if not self.noop:
