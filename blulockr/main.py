@@ -17,6 +17,8 @@ BTDEVICE = None
 INTERVAL = 3
 LTYPE = "undefined"
 LTYPES = ["undefined", "loginctl"]
+# 0: disable, 1: lock only, 2: unlock only, 3: both
+MODE = 3
 
 # runtime
 logger = None
@@ -35,8 +37,8 @@ def setup():
             help=f"locker type [{', '.join(t for t in LTYPES)}]")
     parser.add_argument("-s", "--scan", dest="scan", action="store_true",
             help="scan for devices")
-    parser.add_argument("-n", "--noop", dest="noop", action="store_true",
-            help="don't execute lock/unlock commands")
+    parser.add_argument("-m", "--mode", dest="mode", type=int,
+            help="mode, 0: disable, 1: lock, 2: unlock, 3: both [default]")
     parser.add_argument("-d", "--debug", dest="debug", action="store_true",
             help="debug mode")
     parser.add_argument("-c", "--config", dest="config_file", type=str,
@@ -54,19 +56,23 @@ def setup():
         logger.warning(f"Exception, Type:{type(ex).__name__}, args:{ex.args}")
 
     # fill new keys with defaults
-    if not config.get("btdevice"):
+    if not "btdevice" in config:
         config["btdevice"] = BTDEVICE
-    if not config.get("interval"):
+    if not "interval" in config:
         config["interval"] = INTERVAL
-    if not config.get("ltype"):
+    if not "ltype" in config:
         config["ltype"] = LTYPE
+    if not "mode" in config:
+        config["mode"] = MODE
     # overwrite with arguments
-    if args.btdevice:
+    if args.btdevice is not None:
         config["btdevice"] = args.btdevice
-    if args.interval:
+    if args.interval is not None:
         config["interval"] = args.interval
-    if args.ltype:
+    if args.ltype is not None:
         config["ltype"] = args.ltype
+    if args.mode is not None:
+        config["mode"] = args.mode
 
     # save updated config
     try:
@@ -80,10 +86,6 @@ def setup():
         config["scan"] = args.scan
     else:
         config["scan"] = False
-    if args.noop:
-        config["noop"] = args.noop
-    else:
-        config["noop"] = False
     if args.debug:
         config["debug"] = args.debug
     else:
@@ -106,7 +108,7 @@ def main():
     logger.debug(f"config: {config}")
 
     BL = BluLockr(ltype=config.get("ltype"), btdevice=config.get("btdevice"),
-            interval=config.get("interval"), noop=config.get("noop"),
+            interval=config.get("interval"), mode=config.get("mode"),
             debug=config.get("debug"))
     if config.get("scan") or not config.get("btdevice"):
         BL.scan()
