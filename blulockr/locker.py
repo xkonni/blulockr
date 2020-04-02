@@ -53,7 +53,7 @@ class LoginCtl(Locker):
         sessionid = 0
         for line in ret.stdout.decode().split("\n"):
             if "seat" in line:
-                words = re.findall(r'\w+', line)[0]
+                words = re.findall(r'\w+', line)
                 sessionid = words[0]
 
         self.logger.debug(f"sessionid: {sessionid}")
